@@ -1,0 +1,2 @@
+# Katatumurigadonokuraikaketearukukyori-
+カタツムリがその距離をどのくらいかけて歩くかと言う東京ドーム何個文の次にわかりにくい例を計算してくれる便利ツールです
