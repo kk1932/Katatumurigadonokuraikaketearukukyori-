@@ -42,14 +42,14 @@
  <h3 style="margin-top:18px">⏩ 時間スキップ</h3>
  <div class="row"><button data-skip="24">+24時間</button><button data-skip="168">+7日</button><button data-skip="720">+30日</button></div>
  <h3 style="margin-top:18px">📖 観測履歴</h3><div class="eventlog" id="history">観測開始待ち</div>
- <div class="row"><button id="reset">観測リセット</button><button id="close">閉じる</button></div>
+ <div class="row"><button id="distanceReset">進んだ距離だけリセット</button><button id="reset">観測リセット</button></div><div class="row"><button id="close">閉じる</button></div>
 </div>
 <script>
 const SPEED=48,$=id=>document.getElementById(id),fmt=(n,d=2)=>Number(n).toLocaleString("ja-JP",{maximumFractionDigits:d});
-let elapsed=0,mult=1,running=true,last=0,goal=40075000,lastLog=0,events=[],achieved=new Set();
+let elapsed=0,traveled=0,mult=1,running=true,last=0,goal=40075000,lastLog=0,events=[],achieved=new Set();
 let forecast=[],forecastStart=0,heavyPattern=false,heavyWasRain=false,weatherLocation="東京都",weatherLoaded=false;
 const milestones=[1,10,100,1000,10000,100000,1000000,10000000,40075000];
-const distance=()=>elapsed/3600*SPEED;
+const distance=()=>traveled;
 function timeFormat(s){if(s<60)return fmt(s,1)+"秒";if(s<3600)return fmt(s/60,1)+"分";if(s<86400)return fmt(s/3600,1)+"時間";if(s<31536000)return fmt(s/86400,1)+"日";return fmt(s/31536000,2)+"年"}
 function log(s){$("log").textContent=s;events.unshift("DAY "+fmt(elapsed/86400,1)+" — "+s);events=events.slice(0,35);$("history").innerHTML=events.map(x=>"<div>"+x+"</div>").join("")}
 function toast(s){$("toast").textContent=s;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),3000)}
@@ -73,7 +73,7 @@ function update(){
  for(const m of milestones)if(d>=m&&!achieved.has(m)){achieved.add(m);toast(m===40075000?"🌏 世界一周達成！！":"🏅 "+fmt(m)+"m 到達！");log(m===40075000?"ついに世界一周を達成しました。":fmt(m)+"メートル地点に到達。")}
  updateWeather();
 }
-function advance(s){elapsed+=s;update()}
+function advance(s){elapsed+=s;traveled+=s/3600*SPEED;update()}
 function ambientLog(){const a=["雨粒が葉っぱに落ちています。","カタツムリは一定の速度で進んでいます。","観測地点に異常なし。","紫陽花の花が揺れています。","水たまりに波紋が広がっています。","今日も平和な庭です。","観測員：特に報告事項なし。","カタツムリの進行を確認。","雨脚が少し強くなったようです。","小さな虫が近くを通過しました。","彼は何も気にせず進んでいます。","殻に雨粒がついています。"];log(a[Math.floor(Math.random()*a.length)])}
 function loop(t){if(!running)return;if(!last)last=t;const delta=Math.min((t-last)/1000,.25);last=t;advance(delta*mult);if(elapsed-lastLog>3600){lastLog=elapsed;ambientLog()}requestAnimationFrame(loop)}
 function bubble(){const a=["……","雨だなあ","まだまだ先は長い","🐌","休憩しようかな","順調です","葉っぱがある","……進むか"];$("snailBubble").textContent=a[Math.floor(Math.random()*a.length)];$("snailBubble").classList.add("show");setTimeout(()=>$("snailBubble").classList.remove("show"),3500)}
@@ -85,7 +85,7 @@ $("speed").onclick=()=>{const a=[1,2,5,10,100];setSpeed(a[(a.indexOf(mult)+1)%a.
 $("menu").onclick=()=>$("more").classList.toggle("open");$("close").onclick=()=>$("more").classList.remove("open");
 $("goal").onchange=()=>{const v=Number($("goal").value);if(v>0){goal=v;update();log("目標距離を変更しました。")}};
 document.querySelectorAll("[data-skip]").forEach(b=>b.onclick=()=>{const h=Number(b.dataset.skip);advance(h*3600);log(timeFormat(h*3600)+" の時間スキップを実行。");toast("⏩ "+timeFormat(h*3600)+" 経過！")});
-$("reset").onclick=()=>{if(!confirm("観測データをリセットしますか？"))return;elapsed=0;achieved.clear();lastLog=0;events=[];heavyWasRain=false;document.body.classList.remove("heavy");update();log("新しい観測を開始しました。")};
+$("distanceReset").onclick=()=>{if(!confirm("進んだ距離を0 mに戻しますか？\n経過時間と天気の状態はそのままです。"))return;traveled=0;achieved.clear();update();log("進んだ距離だけをリセットしました。経過時間は継続中です。");toast("進んだ距離を0 mにリセットしました")};\n$("reset").onclick=()=>{if(!confirm("観測データをすべてリセットしますか？"))return;elapsed=0;traveled=0;achieved.clear();lastLog=0;events=[];heavyWasRain=false;document.body.classList.remove("heavy");update();log("新しい観測を開始しました。")};
 async function getForecast(lat,lon,label){
  try{$("weatherStatus").textContent="天気予報を取得中…";const url="https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&hourly=weather_code&forecast_days=3&timezone=auto";const res=await fetch(url);if(!res.ok)throw Error("天気API HTTP "+res.status);const data=await res.json();if(!data.hourly?.time||!data.hourly?.weather_code)throw Error("予報データがありません");
  const now=Date.now();let start=0,best=Infinity;data.hourly.time.forEach((t,i)=>{const diff=Math.abs(new Date(t).getTime()-now);if(diff<best){best=diff;start=i}});forecast=data.hourly.weather_code;forecastStart=start;weatherLocation=label;weatherLoaded=true;heavyWasRain=false;findHeavyPattern();document.body.classList.remove("heavy");updateWeather();$("weatherStatus").textContent="天気："+label+" / 取得成功";if(heavyPattern){toast("🌈 雨→晴れの予報を検出！");log(label+"で雨のち晴れを検出。ヘビー・ウェザー発動条件成立。")}else{toast("天気予報を取得しました");log(label+"の天気予報を取得しました。")}
