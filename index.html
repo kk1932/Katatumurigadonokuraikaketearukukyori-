@@ -171,6 +171,7 @@ function bubble(){const a=["……","雨だなあ","まだまだ先は長い","�
 function setSpeed(v){mult=v;$("speed").textContent="×"+v;document.querySelectorAll("#speeds button").forEach(b=>b.classList.toggle("active",Number(b.dataset.v)===v));updateMih();log(v>1?"メイド・イン・ヘブン。時間加速を開始。倍率 ×"+v:"時間加速を解除しました。")}
 [1,2,5,10,100,1000,10000,100000].forEach(v=>{const b=document.createElement("button");b.textContent="×"+v;b.dataset.v=v;b.onclick=()=>setSpeed(v);$("speeds").appendChild(b)});
 setSpeed(1);
+let manualSeason=null,gardenTool="flower",gardenWater=0,gardenPlaced=0;
 let observationPoints=0;const observationNotes=["葉の表面に細かな水滴がついている。","土の色が少し濃くなっている。","花びらが風に揺れている。","小さな足跡のような跡を見つけた。","水たまりに雨粒の波紋が広がっている。","庭の隅で小さな生き物が動いた。","カタツムリの進行方向に葉っぱがある。","雲の切れ間から少し光が差している。"];
 $("observeToggle").onclick=()=>$("observePanel").classList.toggle("open");
 function addObservation(text){observationPoints++;$("observePoints").textContent="観察ポイント："+observationPoints; $("observeMessage").textContent=text;log("観察記録："+text);toast("🔎 観察ポイント +1")}
@@ -204,7 +205,6 @@ const style=document.createElement("style");style.textContent="@keyframes float{
 log("雨の庭で観測を開始しました。");renderBook();update();requestAnimationFrame(loop);searchCity();
 
 /* GARDEN GOD MODE */
-let manualSeason=null,gardenTool="flower",gardenWater=0,gardenPlaced=0;
 const gardenIcons={flower:"🌼",grass:"🌱",tree:"🌳",stone:"🪨",pond:"🟦",lantern:"🏮",food:"🥬"};
 function gardenStatus(){const n=$("gardenStatus");if(n)n.textContent="道具："+({water:"水やり",...Object.fromEntries(Object.entries(gardenIcons).map(([k,v])=>[k,v])) ,erase:"消しゴム"}[gardenTool]||"なし")+" / 配置物："+gardenPlaced+" / 水やり："+gardenWater+"回"}
 $("gardenButton").onclick=()=>$("gardenPanel").classList.toggle("open");
