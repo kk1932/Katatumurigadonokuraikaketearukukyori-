@@ -53,6 +53,27 @@ button.active{background:#719b7e}
 @keyframes creatureFloat{from{transform:translateY(4px)}to{transform:translateY(-8px)}}
 @keyframes ripple{0%,100%{transform:scaleY(1);opacity:.8}50%{transform:scaleY(1.3);opacity:1}}
 @media(max-width:520px){.cloud{transform:scale(.75);transform-origin:left top}.log{border:2px solid #d5e7be}}
+
+/* GARDEN GOD MODE */
+#gardenButton{position:fixed;z-index:7;right:14px;bottom:88px;border:2px solid #d5e7d9;background:#345d48;color:#fff;padding:11px 14px;border-radius:8px;font-weight:bold;box-shadow:4px 4px 0 #172b27}
+#gardenPanel{position:fixed;z-index:8;right:14px;bottom:137px;width:min(330px,calc(100vw - 28px));max-height:min(72vh,620px);overflow:auto;display:none;background:#e7f0e9f5;color:#29483d;border:2px solid #9dbba5;border-radius:8px;padding:12px;box-shadow:5px 5px 0 #172b27}
+#gardenPanel.open{display:block}#gardenPanel h3{font-size:14px;margin:3px 0 8px}#gardenPanel p{font-size:10px;line-height:1.5;margin:5px 0 9px}
+.garden-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.garden-tools button,.garden-controls button{border:1px solid #91b29b;background:#f7fbf7;color:#29483d;border-radius:5px;padding:8px 4px;font-size:11px;font-weight:bold}.garden-tools button.selected{background:#547e69;color:white;box-shadow:inset 0 0 0 2px #29483d}
+.garden-controls{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px}.garden-status{font-size:10px!important;padding:7px;background:#d2e3d7;border-radius:5px;margin-top:9px!important}
+.garden-object{position:absolute;z-index:3;transform:translate(-50%,-50%);font-size:clamp(23px,4vw,38px);filter:drop-shadow(2px 3px 0 #172b2755);pointer-events:none;animation:gardenPop .25s steps(3)}
+@keyframes gardenPop{from{transform:translate(-50%,-50%) scale(.4)}to{transform:translate(-50%,-50%) scale(1)}}
+#scene{cursor:crosshair}
+body.player-weather-rain #rain{opacity:.85!important}
+body.player-weather-rain #scene:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(#29465b18,#203e321c)}
+body.player-weather-snow #scene:after{content:"❄　　·　❄　　　·　　❄";position:absolute;inset:12% 0 0;z-index:2;pointer-events:none;color:#fff;font-size:25px;letter-spacing:12px;text-shadow:0 0 5px white;animation:playerSnow 5s linear infinite}
+body.player-weather-storm #scene:after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:#e9f5ff;opacity:0;animation:playerFlash 8s infinite}
+@keyframes playerSnow{from{transform:translateY(-15px)}to{transform:translateY(40px)}}
+@keyframes playerFlash{0%,92%,95%,100%{opacity:0}93%,94%{opacity:.35}}
+body.manual-spring .garden{background:linear-gradient(#78a66b,#355b3d 80%)!important}
+body.manual-summer .garden{background:linear-gradient(#477b43,#203e2d 80%)!important}
+body.manual-autumn .garden{background:linear-gradient(#a17a4c,#514332 80%)!important}
+body.manual-winter .garden{background:linear-gradient(#b7c9c3,#687e77 80%)!important}
+@media(max-width:520px){#gardenButton{right:10px;bottom:104px}#gardenPanel{right:10px;bottom:153px}}
 </style>
 </head>
 <body>
@@ -63,7 +84,7 @@ button.active{background:#719b7e}
  <div id="snailArea"><div id="snailBubble">……</div><div id="snail">🐌</div></div>
 </div>
 <button id="observeToggle">🔎 庭を観察</button><div id="observePanel"><h3>🔎 観察アクション</h3><p id="observeMessage">庭を調べたり、カタツムリを観察したりできます。</p><div class="observe-actions"><button id="observeGarden">🌿 庭を調べる</button><button id="observeSnail">🐌 カタツムリ</button><button id="observeWeather">🌦️ 天候を記録</button><button id="observeRecord">📝 観察メモ</button></div><small id="observePoints">観察ポイント：0</small></div>
-<div id="ambience"></div>
+<button id="gardenButton">🪴 庭づくり</button><div id="gardenPanel"><h3>🪴 庭づくり・神様メニュー</h3><p>道具を選んで庭をタップすると配置できます。天候や季節も自由に変更できます。</p><div class="garden-tools"><button data-tool="water">💧 水やり</button><button data-tool="flower">🌼 花</button><button data-tool="grass">🌱 草</button><button data-tool="tree">🌳 木</button><button data-tool="stone">🪨 石</button><button data-tool="pond">🟦 池</button><button data-tool="lantern">🏮 灯り</button><button data-tool="food">🥬 餌</button><button data-tool="erase">🧹 消す</button></div><h3 style="margin-top:12px">☀️ 天候操作</h3><div class="garden-controls"><button data-weather="clear">☀️ 晴れにする</button><button data-weather="rain">🌧️ 雨を降らせる</button><button data-weather="storm">⛈️ 雷雨にする</button><button data-weather="snow">❄️ 雪を降らせる</button></div><h3 style="margin-top:12px">🍂 季節操作</h3><div class="garden-controls"><button data-season="spring">🌸 春</button><button data-season="summer">🌻 夏</button><button data-season="autumn">🍁 秋</button><button data-season="winter">❄️ 冬</button><button data-season="auto" style="grid-column:1/-1">🗓️ 季節を自動に戻す</button></div><div class="garden-status" id="gardenStatus">道具：なし / 配置物：0 / 水やり：0回</div><p>※配置したものはこのページを開いている間だけ保存されます。</p><button id="gardenClose" style="width:100%;margin-top:6px">閉じる</button></div><div id="ambience"></div>
 <div id="standStatus"><span class="standTag" id="mihTag">MADE IN HEAVEN</span><span class="standTag" id="heavyTag">HEAVY WEATHER</span></div>
 <div id="toast"></div>
 <div id="ui">
@@ -127,7 +148,7 @@ function update(){
 }
 
 function updateEcology(simDate,phase){const monthNow=simDate.getMonth()+1;document.body.classList.toggle("aurora",monthNow===12||monthNow<=2?phase==="night":false);document.body.classList.toggle("firefly-night",monthNow>=6&&monthNow<=8&&phase==="night");
- const month=simDate.getMonth()+1,season=month>=3&&month<=5?"spring":month>=6&&month<=8?"summer":month>=9&&month<=11?"autumn":"winter",sn={spring:"春",summer:"夏",autumn:"秋",winter:"冬"}[season];
+ const month=simDate.getMonth()+1,season=manualSeason||(month>=3&&month<=5?"spring":month>=6&&month<=8?"summer":month>=9&&month<=11?"autumn":"winter"),sn={spring:"春",summer:"夏",autumn:"秋",winter:"冬"}[season];
  document.body.classList.remove("spring","summer","autumn","winter");document.body.classList.add(season);$("seasonName").textContent=sn+"（"+month+"月）";
  if(lastSeason&&lastSeason!==season){toast("🍂 季節が"+sn+"になりました");log("季節が"+sn+"に移り変わりました。")}lastSeason=season;
  const days=elapsed/86400,growth=days%120/120*100,stage=growth<25?"芽吹き":growth<55?"成長中":growth<85?"開花":"実り・種の準備";
@@ -181,6 +202,21 @@ setInterval(()=>{if(Math.random()<.45)bubble()},14000);
 setInterval(()=>{if(Math.random()<.5){const e=document.createElement("div");e.textContent=["💧","✨","🍃","🌧️"][Math.floor(Math.random()*4)];e.style.cssText="position:absolute;left:"+Math.random()*100+"%;top:"+Math.random()*100+"%;font-size:20px;opacity:.7;animation:float 3s forwards";$("ambience").appendChild(e);setTimeout(()=>e.remove(),3000)}},2200);
 const style=document.createElement("style");style.textContent="@keyframes float{to{transform:translateY(-70px) rotate(30deg);opacity:0}}";document.head.appendChild(style);
 log("雨の庭で観測を開始しました。");renderBook();update();requestAnimationFrame(loop);searchCity();
+
+/* GARDEN GOD MODE */
+let manualSeason=null,gardenTool="flower",gardenWater=0,gardenPlaced=0;
+const gardenIcons={flower:"🌼",grass:"🌱",tree:"🌳",stone:"🪨",pond:"🟦",lantern:"🏮",food:"🥬"};
+function gardenStatus(){const n=$("gardenStatus");if(n)n.textContent="道具："+({water:"水やり",...Object.fromEntries(Object.entries(gardenIcons).map(([k,v])=>[k,v])) ,erase:"消しゴム"}[gardenTool]||"なし")+" / 配置物："+gardenPlaced+" / 水やり："+gardenWater+"回"}
+$("gardenButton").onclick=()=>$("gardenPanel").classList.toggle("open");
+$("gardenClose").onclick=()=>$("gardenPanel").classList.remove("open");
+document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{gardenTool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("selected",x===b));gardenStatus();$("gardenPanel").querySelector("p").textContent=gardenTool==="water"?"庭をタップすると水たまりができます。":gardenTool==="erase"?"庭の配置物をタップすると消去できます。":"庭の好きな場所をタップして配置しましょう。"});
+function gardenPlace(x,y){const scene=$("scene"),r=scene.getBoundingClientRect(),px=Math.max(2,Math.min(98,(x-r.left)/r.width*100)),py=Math.max(12,Math.min(96,(y-r.top)/r.height*100));if(gardenTool==="water"){gardenWater++;const e=document.createElement("div");e.className="garden-object";e.textContent="💧";e.style.left=px+"%";e.style.top=py+"%";scene.appendChild(e);setTimeout(()=>e.remove(),1800);$("gardenStatus").textContent="水やり："+gardenWater+"回 / 土がうるおった！";toast("💧 水をまきました");return}
+if(gardenTool==="erase"){const objs=[...scene.querySelectorAll(".garden-object")];if(objs.length){objs.sort((a,b)=>Math.hypot(parseFloat(a.style.left)-px,parseFloat(a.style.top)-py)-Math.hypot(parseFloat(b.style.left)-px,parseFloat(b.style.top)-py))[0].remove();gardenPlaced=Math.max(0,gardenPlaced-1);gardenStatus();toast("🧹 配置物を片付けました")}return}
+const e=document.createElement("div");e.className="garden-object";e.textContent=gardenIcons[gardenTool];e.dataset.kind=gardenTool;e.style.left=px+"%";e.style.top=py+"%";scene.appendChild(e);gardenPlaced++;gardenStatus();if(gardenTool==="food"){bubble();$("snailBubble").textContent="おいしそうな葉っぱ！";toast("🥬 餌を置きました。カタツムリが気づくかも")}else toast(gardenIcons[gardenTool]+" を配置しました");}
+$("scene").addEventListener("click",e=>{if(e.target.closest("button")||e.target.closest("#ui")||e.target.closest("#gardenPanel")||e.target.closest("#observePanel")||e.target.closest("#observeToggle")||e.target.closest("#gardenButton"))return;gardenPlace(e.clientX,e.clientY)});
+document.querySelectorAll("[data-weather]").forEach(b=>b.onclick=()=>{document.body.classList.remove("player-weather-rain","player-weather-storm","player-weather-snow");if(b.dataset.weather!=="clear")document.body.classList.add("player-weather-"+b.dataset.weather);if(b.dataset.weather==="rain"||b.dataset.weather==="storm")$("rain").style.opacity=".85";else $("rain").style.opacity="";$("gardenStatus").textContent="天候操作："+b.textContent;toast("天候を変更："+b.textContent);log("プレイヤーが天候を操作しました："+b.textContent)});
+document.querySelectorAll("[data-season]").forEach(b=>b.onclick=()=>{manualSeason=b.dataset.season==="auto"?null:b.dataset.season;document.body.classList.remove("manual-spring","manual-summer","manual-autumn","manual-winter");if(manualSeason)document.body.classList.add("manual-"+manualSeason);update();toast(manualSeason?b.textContent+"に変更":"季節をカレンダー連動に戻しました");log("季節設定を変更しました。")});
+gardenStatus();
 </script>
 </body>
 </html>
