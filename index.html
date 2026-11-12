@@ -11,6 +11,11 @@
 #wildlife{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}.creature{position:absolute;font-size:clamp(22px,4vw,38px);filter:drop-shadow(0 3px 3px #182c2866);animation:creatureFloat 5s ease-in-out infinite alternate}@keyframes creatureFloat{from{transform:translateY(5px) rotate(-7deg)}to{transform:translateY(-13px) rotate(8deg)}}
 body.spring .garden{background:linear-gradient(#5c8057,#294735 80%)}body.summer .garden{background:linear-gradient(#54794a,#294735 80%)}body.autumn .garden{background:linear-gradient(#78664a,#3e4433 80%)}body.autumn .leaf{filter:hue-rotate(45deg) saturate(.8)}body.winter .garden{background:linear-gradient(#879b91,#45594f 80%)}body.winter .ground{background:linear-gradient(#8a9d98,#526761)}body.winter .flower{filter:grayscale(.25) brightness(.85)}
 .eco-section{border-top:1px solid #b8cfc0;padding-top:12px;margin-top:14px}.eco-section h3{margin:0 0 8px;font-size:14px}.eco-note{font-size:10px;color:#587264;line-height:1.6}.eco-bars{height:76px;display:flex;align-items:end;gap:5px;padding:8px 5px 0;background:#d7e7dd;border-radius:8px}.eco-bar-wrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:3px}.eco-bar{width:100%;min-height:2px;background:linear-gradient(#93b99a,#547e69);border-radius:4px 4px 0 0}.eco-bar-wrap small{font-size:9px;color:#587264}.eco-progress{height:8px;background:#c7d9ce;border-radius:10px;overflow:hidden}.eco-progress span{display:block;height:100%;background:#739d7d;border-radius:10px}.book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.book-item{display:flex;align-items:center;gap:7px;padding:7px;background:#d7e7dd;border-radius:8px;font-size:11px}.book-icon{font-size:20px;width:26px;text-align:center}.book-item.locked{opacity:.5}.eco-metric{display:flex;justify-content:space-between;gap:8px;font-size:11px;padding:4px 0;border-bottom:1px solid #d3e2d8}
+
+#speeds{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}#speeds button{padding:6px 8px!important;font-size:10px}
+#observeToggle{position:fixed;z-index:4;left:15px;bottom:88px;pointer-events:auto;border:1px solid #dcebe0;background:#29483ddd;color:#fff;border-radius:22px;padding:10px 14px;font-weight:700;box-shadow:0 3px 14px #10251f55}
+#observePanel{position:fixed;z-index:5;left:15px;bottom:137px;width:min(290px,calc(100vw - 30px));display:none;pointer-events:auto;background:#e7f0e9f2;color:#29483d;border:1px solid #c6d9cc;border-radius:14px;padding:12px;box-shadow:0 8px 30px #132a2855}#observePanel.open{display:block}#observePanel h3{font-size:13px;margin:0 0 8px}#observePanel p{font-size:11px;line-height:1.5;margin:5px 0 9px}#observePanel .observe-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}#observePanel button{border:1px solid #abc4b3;border-radius:8px;background:#f5faf6;color:#29483d;padding:8px 5px;font-size:11px}#observePanel small{font-size:10px;opacity:.8}
+@media(max-width:520px){#observeToggle{bottom:104px;left:10px}#observePanel{bottom:153px;left:10px}}
 </style>
 </head>
 <body>
@@ -20,6 +25,7 @@ body.spring .garden{background:linear-gradient(#5c8057,#294735 80%)}body.summer 
  <div class="flower f1">🌺</div><div class="flower f2">🌸</div><div class="flower f3">🌼</div><div class="leaf l1">🌿</div><div class="leaf l2">🍃</div><div id="wildlife"></div><div class="puddle p1"></div><div class="puddle p2"></div>
  <div id="snailArea"><div id="snailBubble">……</div><div id="snail">🐌</div></div>
 </div>
+<button id="observeToggle">🔎 庭を観察</button><div id="observePanel"><h3>🔎 観察アクション</h3><p id="observeMessage">庭を調べたり、カタツムリを観察したりできます。</p><div class="observe-actions"><button id="observeGarden">🌿 庭を調べる</button><button id="observeSnail">🐌 カタツムリ</button><button id="observeWeather">🌦️ 天候を記録</button><button id="observeRecord">📝 観察メモ</button></div><small id="observePoints">観察ポイント：0</small></div>
 <div id="ambience"></div>
 <div id="standStatus"><span class="standTag" id="mihTag">MADE IN HEAVEN</span><span class="standTag" id="heavyTag">HEAVY WEATHER</span></div>
 <div id="toast"></div>
@@ -44,7 +50,7 @@ body.spring .garden{background:linear-gradient(#5c8057,#294735 80%)}body.summer 
  <div class="row"><span>達成率</span><b id="progress">0%</b></div>
  <div class="row"><span>到達予想（×1）</span><b id="eta">---</b></div>
  <div class="eco-section"><h3>🌿 生態系・季節観測</h3><div class="eco-metric"><span>現在の季節</span><b id="seasonName">---</b></div><div class="eco-metric"><span>植物の成長</span><b id="plantStage">---</b></div><div class="eco-progress"><span id="plantGrowthBar" style="width:0%"></span></div><div class="eco-note" id="plantNote">植物の成長を観測中…</div><div class="eco-metric"><span>観測した生き物</span><b id="speciesCount">0 / 8 種</b></div><div class="eco-section"><h3>📈 観測データ</h3><div id="ecoStats"></div><div class="eco-note">日別移動距離（過去7日・シミュレーション時間）</div><div class="eco-bars" id="ecoChart"></div></div><div class="eco-section"><h3>📚 生き物図鑑</h3><div class="book-grid" id="creatureBook"></div><div class="eco-note" id="bookHint">生き物を見つけると図鑑に登録されます。</div></div></div><h3 style="margin-top:18px">⏩ 時間スキップ</h3>
- <div class="row"><button data-skip="24">+24時間</button><button data-skip="168">+7日</button><button data-skip="720">+30日</button></div>
+ <div class="row"><button data-skip="1">+1時間</button><button data-skip="24">+24時間</button><button data-skip="168">+7日</button><button data-skip="720">+30日</button><button id="skipSixMonths">+6ヶ月</button></div>
  <h3 style="margin-top:18px">📖 観測履歴</h3><div class="eventlog" id="history">観測開始待ち</div>
  <div class="row"><button id="distanceReset">進んだ距離だけリセット</button><button id="reset">観測リセット</button></div><div class="row"><button id="close">閉じる</button></div>
 </div>
@@ -105,13 +111,21 @@ function ambientLog(){const a=["雨粒が葉っぱに落ちています。","カ
 function loop(t){if(!running)return;if(!last)last=t;const delta=Math.min((t-last)/1000,.25);last=t;advance(delta*mult);if(elapsed-lastLog>3600){lastLog=elapsed;ambientLog()}requestAnimationFrame(loop)}
 function bubble(){const a=["……","雨だなあ","まだまだ先は長い","🐌","休憩しようかな","順調です","葉っぱがある","……進むか"];$("snailBubble").textContent=a[Math.floor(Math.random()*a.length)];$("snailBubble").classList.add("show");setTimeout(()=>$("snailBubble").classList.remove("show"),3500)}
 function setSpeed(v){mult=v;$("speed").textContent="×"+v;document.querySelectorAll("#speeds button").forEach(b=>b.classList.toggle("active",Number(b.dataset.v)===v));updateMih();log(v>1?"メイド・イン・ヘブン。時間加速を開始。倍率 ×"+v:"時間加速を解除しました。")}
-[1,2,5,10,100].forEach(v=>{const b=document.createElement("button");b.textContent="×"+v;b.dataset.v=v;b.onclick=()=>setSpeed(v);$("speeds").appendChild(b)});
+[1,2,5,10,100,1000,10000,100000].forEach(v=>{const b=document.createElement("button");b.textContent="×"+v;b.dataset.v=v;b.onclick=()=>setSpeed(v);$("speeds").appendChild(b)});
 setSpeed(1);
+let observationPoints=0;const observationNotes=["葉の表面に細かな水滴がついている。","土の色が少し濃くなっている。","花びらが風に揺れている。","小さな足跡のような跡を見つけた。","水たまりに雨粒の波紋が広がっている。","庭の隅で小さな生き物が動いた。","カタツムリの進行方向に葉っぱがある。","雲の切れ間から少し光が差している。"];
+$("observeToggle").onclick=()=>$("observePanel").classList.toggle("open");
+function addObservation(text){observationPoints++;$("observePoints").textContent="観察ポイント："+observationPoints; $("observeMessage").textContent=text;log("観察記録："+text);toast("🔎 観察ポイント +1")}
+$("observeGarden").onclick=()=>addObservation(observationNotes[Math.floor(Math.random()*observationNotes.length)]);
+$("observeSnail").onclick=()=>{bubble();addObservation("カタツムリを観察。現在の移動距離は "+fmt(traveled,2)+" m。")};
+$("observeWeather").onclick=()=>{const t=$("weatherText").textContent;addObservation("現在の天候："+(t&&t!=="未取得"?t:"天気データを確認中")+"。")};
+$("observeRecord").onclick=()=>addObservation("観測メモを1件追加。累計 "+observationPoints+" 件目。");
 $("pause").onclick=()=>{running=!running;$("pause").textContent=running?"Ⅱ":"▶";if(running){last=0;requestAnimationFrame(loop)}else log("観測を一時停止しました。")};
-$("speed").onclick=()=>{const a=[1,2,5,10,100];setSpeed(a[(a.indexOf(mult)+1)%a.length])};
+$("speed").onclick=()=>{const a=[1,2,5,10,100,1000,10000,100000];setSpeed(a[(a.indexOf(mult)+1)%a.length])};
 $("menu").onclick=()=>$("more").classList.toggle("open");$("close").onclick=()=>$("more").classList.remove("open");
 $("goal").onchange=()=>{const v=Number($("goal").value);if(v>0){goal=v;update();log("目標距離を変更しました。")}};
 document.querySelectorAll("[data-skip]").forEach(b=>b.onclick=()=>{const h=Number(b.dataset.skip);advance(h*3600);log(timeFormat(h*3600)+" の時間スキップを実行。");toast("⏩ "+timeFormat(h*3600)+" 経過！")});
+$("skipSixMonths").onclick=()=>{const from=new Date(Date.now()+elapsed*1000),to=new Date(from);to.setDate(1);to.setMonth(to.getMonth()+6);const lastDay=new Date(to.getFullYear(),to.getMonth()+1,0).getDate();to.setDate(Math.min(from.getDate(),lastDay));to.setHours(from.getHours(),from.getMinutes(),from.getSeconds(),from.getMilliseconds());const seconds=(to-from)/1000;advance(seconds);log("シミュレーション時間を6ヶ月進めました。");toast("⏩ 6ヶ月経過！")};
 $("distanceReset").onclick=()=>{if(!confirm("進んだ距離を0 mに戻しますか？\n経過時間と天気の状態はそのままです。"))return;traveled=0;achieved.clear();document.body.classList.remove("arrived");update();log("進んだ距離だけをリセットしました。経過時間は継続中です。");toast("進んだ距離を0 mにリセットしました")};
 $("reset").onclick=()=>{if(!confirm("観測データをすべてリセットしますか？"))return;elapsed=0;traveled=0;achieved.clear();discoveredSpecies.clear();lastWildlifeKey="";lastSeason="";$("wildlife").innerHTML="";renderBook();lastLog=0;events=[];heavyWasRain=false;document.body.classList.remove("heavy","arrived");update();log("新しい観測を開始しました。")};
 async function getForecast(lat,lon,label){
