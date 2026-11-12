@@ -16,6 +16,43 @@ body.spring .garden{background:linear-gradient(#5c8057,#294735 80%)}body.summer 
 #observeToggle{position:fixed;z-index:4;left:15px;bottom:88px;pointer-events:auto;border:1px solid #dcebe0;background:#29483ddd;color:#fff;border-radius:22px;padding:10px 14px;font-weight:700;box-shadow:0 3px 14px #10251f55}
 #observePanel{position:fixed;z-index:5;left:15px;bottom:137px;width:min(290px,calc(100vw - 30px));display:none;pointer-events:auto;background:#e7f0e9f2;color:#29483d;border:1px solid #c6d9cc;border-radius:14px;padding:12px;box-shadow:0 8px 30px #132a2855}#observePanel.open{display:block}#observePanel h3{font-size:13px;margin:0 0 8px}#observePanel p{font-size:11px;line-height:1.5;margin:5px 0 9px}#observePanel .observe-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}#observePanel button{border:1px solid #abc4b3;border-radius:8px;background:#f5faf6;color:#29483d;padding:8px 5px;font-size:11px}#observePanel small{font-size:10px;opacity:.8}
 @media(max-width:520px){#observeToggle{bottom:104px;left:10px}#observePanel{bottom:153px;left:10px}}body.aurora #sky:after{content:"";position:absolute;inset:8% 0 25%;pointer-events:none;opacity:.5;background:linear-gradient(115deg,transparent 15%,#63d7b533 32%,#9d8be655 46%,#63d7b533 58%,transparent 76%);filter:blur(18px);animation:auroraWave 9s ease-in-out infinite alternate}@keyframes auroraWave{from{transform:translateX(-5%) skewY(-5deg);opacity:.25}to{transform:translateX(5%) skewY(5deg);opacity:.7}}body.firefly-night #wildlife:after{content:"✨　 ·　 ✦　 ·　 ✨　 ·　 ✦";position:absolute;left:8%;top:54%;width:84%;color:#e6f4a6;font-size:clamp(14px,2vw,22px);letter-spacing:12px;text-shadow:0 0 12px #dfff8b;opacity:.8;animation:fireflyBlink 2.8s ease-in-out infinite alternate}@keyframes fireflyBlink{from{opacity:.18;transform:translateY(5px)}to{opacity:.9;transform:translateY(-8px)}}
+
+/* PIXEL ART MODE */
+:root{--px-line:#1d332d;--px-shadow:4px 4px 0 #172b27}
+body{font-family:"Courier New",monospace;letter-spacing:.15px}
+#scene{background:#304d43;image-rendering:pixelated}
+#scene:before{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;opacity:.13;background:repeating-linear-gradient(0deg,transparent 0 7px,#10251f 8px),repeating-linear-gradient(90deg,transparent 0 7px,#10251f 8px);mix-blend-mode:multiply}
+.sky{background-color:#668b9b;transition:background 1.5s}
+.stars{background-image:radial-gradient(circle at 12% 22%,#fff 0 2px,transparent 2.5px),radial-gradient(circle at 28% 11%,#fff 0 2px,transparent 2.5px),radial-gradient(circle at 43% 29%,#dcecff 0 2px,transparent 2.5px),radial-gradient(circle at 61% 13%,#fff 0 2px,transparent 2.5px),radial-gradient(circle at 76% 25%,#fff 0 2px,transparent 2.5px),radial-gradient(circle at 89% 9%,#fff 0 2px,transparent 2.5px),radial-gradient(circle at 53% 7%,#fff 0 2px,transparent 2.5px);background-size:100% 100%}
+.sun,.moon{border-radius:0;box-shadow:5px 5px 0 #172b2744,0 0 0 4px #ffffff18;transition:opacity 2s,left 8s,top 8s}
+.sun{background:#ffe58b;clip-path:polygon(20% 0,80% 0,80% 10%,90% 10%,90% 20%,100% 20%,100% 80%,90% 80%,90% 90%,80% 90%,80% 100%,20% 100%,20% 90%,10% 90%,10% 80%,0 80%,0 20%,10% 20%,10% 10%,20% 10%)}
+.moon{background:#e5efff;clip-path:polygon(25% 0,75% 0,75% 12%,88% 12%,88% 25%,100% 25%,100% 75%,88% 75%,88% 88%,75% 88%,75% 100%,25% 100%,25% 88%,12% 88%,12% 75%,0 75%,0 25%,12% 25%,12% 12%,25% 12%)}
+.cloud{height:30px;border-radius:0;filter:none;box-shadow:0 10px 0 #a3b6b0,18px 10px 0 #a3b6b0,36px 10px 0 #a3b6b0,54px 10px 0 #a3b6b0,72px 10px 0 #a3b6b0,90px 10px 0 #a3b6b0,108px 10px 0 #a3b6b0,126px 10px 0 #a3b6b0,144px 10px 0 #a3b6b0}
+.cloud:before,.cloud:after{border-radius:0;box-shadow:0 0 0 0 transparent}
+.cloud:before{width:45px;height:24px;left:25px;top:-14px}
+.cloud:after{width:55px;height:24px;left:85px;top:-14px}
+.rain{background-image:repeating-linear-gradient(90deg,transparent 0 15px,#d8e8e7 15px 17px,transparent 17px 38px);background-size:90px 90px;filter:none}
+.garden{background:repeating-linear-gradient(0deg,#294735 0 12px,#31513c 12px 24px,#3f6347 24px 36px)}
+.ground{background:repeating-linear-gradient(90deg,#243d32 0 18px,#2e4937 18px 36px);border-top:6px solid #59764d}
+.horizon{background:linear-gradient(transparent 0 45%,#39584d 45% 100%)}
+.flower,.leaf{filter:none;animation:sway 4s steps(4,end) infinite alternate;image-rendering:pixelated;text-shadow:3px 3px 0 #1d332d}
+.puddle{height:14px;border-radius:0;background:repeating-linear-gradient(90deg,#8eb8b0 0 12px,#a8cbc1 12px 24px);border:3px solid #527b73;box-shadow:4px 4px 0 #203d35;animation:ripple 2s steps(2,end) infinite}
+#snail{filter:none;text-shadow:4px 4px 0 #172b27;animation:snailbob 2s steps(2,end) infinite}
+#snailBubble,.standTag,#toast,.log,#more,#observePanel{border-radius:0;box-shadow:4px 4px 0 #172b27aa;backdrop-filter:none}
+#ui{text-shadow:2px 2px 0 #172b27}
+button{border:3px solid #29463d;border-radius:0;box-shadow:3px 3px 0 #172b27;background:#e5eee2;color:#29463d;font-family:inherit}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #172b27}
+button.active{background:#719b7e}
+#more,#observePanel{border:3px solid #29483d;background:#e7f0e9}
+#more input{border:2px solid #719b7e;border-radius:0;font-family:inherit}
+#more .eventlog,.eco-bars,.book-item{border-radius:0}
+.eco-bar{border-radius:0}
+#observeToggle{border:3px solid #dcebe0;border-radius:0;box-shadow:3px 3px 0 #172b27}
+#rainbow{filter:none;background:repeating-linear-gradient(90deg,#ff5555 0 8px,#ffb347 8px 16px,#fff45c 16px 24px,#65d66e 24px 32px,#5c9dff 32px 40px,#a875e8 40px 48px);height:12px;width:min(420px,80vw);top:29%;border-radius:0;clip-path:polygon(0 100%,0 70%,10% 70%,10% 40%,20% 40%,20% 15%,30% 15%,30% 0,70% 0,70% 15%,80% 15%,80% 40%,90% 40%,90% 70%,100% 70%,100% 100%)}
+.creature{filter:none;text-shadow:3px 3px 0 #172b27;animation:creatureFloat 4s steps(3,end) infinite alternate}
+@keyframes creatureFloat{from{transform:translateY(4px)}to{transform:translateY(-8px)}}
+@keyframes ripple{0%,100%{transform:scaleY(1);opacity:.8}50%{transform:scaleY(1.3);opacity:1}}
+@media(max-width:520px){.cloud{transform:scale(.75);transform-origin:left top}.log{border:2px solid #d5e7be}}
 </style>
 </head>
 <body>
