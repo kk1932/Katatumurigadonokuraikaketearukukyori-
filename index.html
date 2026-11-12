@@ -74,6 +74,24 @@ body.manual-summer .garden{background:linear-gradient(#477b43,#203e2d 80%)!impor
 body.manual-autumn .garden{background:linear-gradient(#a17a4c,#514332 80%)!important}
 body.manual-winter .garden{background:linear-gradient(#b7c9c3,#687e77 80%)!important}
 @media(max-width:520px){#gardenButton{right:10px;bottom:104px}#gardenPanel{right:10px;bottom:153px}}
+
+/* GARDEN PIXEL SPRITES */
+.garden{background-color:#31533a!important;background-image:linear-gradient(90deg,#294a34 25%,transparent 25%,transparent 75%,#294a34 75%),linear-gradient(0deg,#3d6544 25%,transparent 25%,transparent 75%,#3d6544 75%)!important;background-size:32px 32px!important}
+.ground{background-color:#4a382c!important;background-image:linear-gradient(90deg,transparent 50%,#594333 50%),linear-gradient(0deg,#392d26 50%,transparent 50%)!important;background-size:24px 24px!important;border-top:6px solid #66864d!important;image-rendering:pixelated}
+.garden-object{width:32px;height:32px;display:grid;place-items:center;box-sizing:border-box;font-family:"Courier New",monospace;font-size:27px;font-weight:900;line-height:1;color:#e7f4cf;text-shadow:2px 0 #172b27,-2px 0 #172b27,0 2px #172b27,0 -2px #172b27,3px 3px #172b27;filter:none;background:#41664a;border:3px solid #203b2d;box-shadow:4px 4px 0 #172b27;image-rendering:pixelated;border-radius:0}
+.garden-object[data-kind="flower"]{color:#ffd5df;background:#8b5369}
+.garden-object[data-kind="grass"]{color:#b9e78b;background:#426b3c}
+.garden-object[data-kind="tree"]{color:#b8df86;background:#31583a;font-size:29px}
+.garden-object[data-kind="stone"]{color:#d2d8d1;background:#66736c}
+.garden-object[data-kind="pond"]{color:#a9e7ed;background:#397f9b}
+.garden-object[data-kind="lantern"]{color:#ffe18a;background:#795c35}
+.garden-object[data-kind="food"]{color:#d6ef9b;background:#617d3d}
+.garden-object:not([data-kind]){color:#b8e8ed;background:#397f9b}
+#gardenButton,#gardenPanel{border-radius:0;box-shadow:4px 4px 0 #172b27}
+#gardenPanel{background:#dcebdc;color:#29483d;image-rendering:pixelated}
+#gardenPanel button{border-radius:0;box-shadow:2px 2px 0 #29483d}
+#gardenPanel button.selected{box-shadow:inset 0 0 0 2px #29483d,2px 2px 0 #172b27}
+
 </style>
 </head>
 <body>
@@ -205,12 +223,12 @@ const style=document.createElement("style");style.textContent="@keyframes float{
 log("雨の庭で観測を開始しました。");renderBook();update();requestAnimationFrame(loop);searchCity();
 
 /* GARDEN GOD MODE */
-const gardenIcons={flower:"🌼",grass:"🌱",tree:"🌳",stone:"🪨",pond:"🟦",lantern:"🏮",food:"🥬"};
+const gardenIcons={flower:"✿",grass:"♣",tree:"♠",stone:"■",pond:"▦",lantern:"▣",food:"❧"};
 function gardenStatus(){const n=$("gardenStatus");if(n)n.textContent="道具："+({water:"水やり",...Object.fromEntries(Object.entries(gardenIcons).map(([k,v])=>[k,v])) ,erase:"消しゴム"}[gardenTool]||"なし")+" / 配置物："+gardenPlaced+" / 水やり："+gardenWater+"回"}
 $("gardenButton").onclick=()=>$("gardenPanel").classList.toggle("open");
 $("gardenClose").onclick=()=>$("gardenPanel").classList.remove("open");
 document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{gardenTool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("selected",x===b));gardenStatus();$("gardenPanel").querySelector("p").textContent=gardenTool==="water"?"庭をタップすると水たまりができます。":gardenTool==="erase"?"庭の配置物をタップすると消去できます。":"庭の好きな場所をタップして配置しましょう。"});
-function gardenPlace(x,y){const scene=$("scene"),r=scene.getBoundingClientRect(),px=Math.max(2,Math.min(98,(x-r.left)/r.width*100)),py=Math.max(12,Math.min(96,(y-r.top)/r.height*100));if(gardenTool==="water"){gardenWater++;const e=document.createElement("div");e.className="garden-object";e.textContent="💧";e.style.left=px+"%";e.style.top=py+"%";scene.appendChild(e);setTimeout(()=>e.remove(),1800);$("gardenStatus").textContent="水やり："+gardenWater+"回 / 土がうるおった！";toast("💧 水をまきました");return}
+function gardenPlace(x,y){const scene=$("scene"),r=scene.getBoundingClientRect(),px=Math.max(2,Math.min(98,(x-r.left)/r.width*100)),py=Math.max(12,Math.min(96,(y-r.top)/r.height*100));if(gardenTool==="water"){gardenWater++;const e=document.createElement("div");e.className="garden-object";e.textContent="▪";e.style.left=px+"%";e.style.top=py+"%";scene.appendChild(e);setTimeout(()=>e.remove(),1800);$("gardenStatus").textContent="水やり："+gardenWater+"回 / 土がうるおった！";toast("💧 水をまきました");return}
 if(gardenTool==="erase"){const objs=[...scene.querySelectorAll(".garden-object")];if(objs.length){objs.sort((a,b)=>Math.hypot(parseFloat(a.style.left)-px,parseFloat(a.style.top)-py)-Math.hypot(parseFloat(b.style.left)-px,parseFloat(b.style.top)-py))[0].remove();gardenPlaced=Math.max(0,gardenPlaced-1);gardenStatus();toast("🧹 配置物を片付けました")}return}
 const e=document.createElement("div");e.className="garden-object";e.textContent=gardenIcons[gardenTool];e.dataset.kind=gardenTool;e.style.left=px+"%";e.style.top=py+"%";scene.appendChild(e);gardenPlaced++;gardenStatus();if(gardenTool==="food"){bubble();$("snailBubble").textContent="おいしそうな葉っぱ！";toast("🥬 餌を置きました。カタツムリが気づくかも")}else toast(gardenIcons[gardenTool]+" を配置しました");}
 $("scene").addEventListener("click",e=>{if(e.target.closest("button")||e.target.closest("#ui")||e.target.closest("#gardenPanel")||e.target.closest("#observePanel")||e.target.closest("#observeToggle")||e.target.closest("#gardenButton"))return;gardenPlace(e.clientX,e.clientY)});
